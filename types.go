@@ -64,6 +64,8 @@ type Handler interface {
 	Handle(c Session, context HandlerContext)
 	HandlerType() HandlerType
 	Name() string
+	Description() string
+	Pattern(HandlerContext) bool
 }
 
 type Message interface {
@@ -143,7 +145,10 @@ func DiscordRouter(s *discordgo.Session, g interface{}) {
 	}
 	for _, handler := range handlers {
 		if handler.HandlerType() == handlerType {
-			handler.Handle(DiscordSession{s, []Handler{}}, context)
+			if handler.Pattern(context) {
+				handler.Handle(DiscordSession{s, []Handler{}}, context)
+				return
+			}
 		}
 	}
 }

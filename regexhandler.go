@@ -11,14 +11,16 @@ type RegexMessageHandler interface {
 	Pattern(context HandlerContext) bool
 	HandlerType() HandlerType
 	Name() string
+	Description() string
 	NeedsAdmin() bool
 }
 
 type DiscordRegexMessageHandler struct {
-	HandlerPattern string
-	HandlerFn      func(c Session, context RegexHandlerContext)
-	HandlerName    string
-	RequiresAdmin  bool
+	HandlerPattern     string
+	HandlerFn          func(c Session, context RegexHandlerContext)
+	HandlerName        string
+	HandlerDescription string
+	RequiresAdmin      bool
 }
 
 type RegexHandlerContext interface {
@@ -33,6 +35,10 @@ type DiscordRegexHandlerContext struct {
 
 func (h DiscordRegexMessageHandler) NeedsAdmin() bool {
 	return h.RequiresAdmin
+}
+
+func (h DiscordRegexMessageHandler) Description() string {
+	return h.HandlerDescription
 }
 
 func (h DiscordRegexHandlerContext) Groups() map[string]string {
@@ -67,9 +73,10 @@ func (h *DiscordRegexMessageHandler) Handle(s Session, context HandlerContext) {
 			return
 		}
 		log.WithFields(log.Fields{
-			"Handler":   h.Name(),
-			"User_ID":   ctx.UserID(),
-			"User_Name": ctx.UserName(),
+			"Handler":     h.Name(),
+			"Description": h.Description(),
+			"User_ID":     ctx.UserID(),
+			"User_Name":   ctx.UserName(),
 		}).Info()
 		h.HandlerFn(s, DiscordRegexHandlerContext{
 			context,

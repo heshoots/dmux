@@ -5,23 +5,23 @@ import (
 )
 
 type MockSession struct {
-	messages        []Message
-	roles           []Role
-	users           map[string][]string
-	userPermissions map[string]Permissions
+	SessionMessages        []Message
+	SessionRoles           []Role
+	SessionUsers           map[string][]string
+	SessionUserPermissions map[string]Permissions
 }
 
 type MockRole struct {
-	name string
-	id   string
+	RoleName string
+	RoleID   string
 }
 
 func (r MockRole) Name() string {
-	return r.name
+	return r.RoleName
 }
 
 func (r MockRole) ID() string {
-	return r.id
+	return r.RoleID
 }
 
 type MockMessage struct {
@@ -29,29 +29,41 @@ type MockMessage struct {
 }
 
 func (m MockSession) MessageChannel(channelID, message string) (Message, error) {
-	m.messages = append(m.messages, message)
+	m.SessionMessages = append(m.SessionMessages, message)
 	return MockMessage{message}, nil
 }
 
 func (m MockSession) GuildRoles(guildID string) ([]Role, error) {
-	return m.roles, nil
+	return m.SessionRoles, nil
 }
 
 func (m MockSession) GuildMemberRoleAdd(guildID, userID, roleID string) error {
-	m.users[userID] = append(m.users[userID], roleID)
+	m.SessionUsers[userID] = append(m.SessionUsers[userID], roleID)
 	return nil
 }
 
 func (m MockSession) UserChannelPermissions(userID, channelID string) (Permissions, error) {
-	if val, ok := m.userPermissions[userID]; ok {
+	if val, ok := m.SessionUserPermissions[userID]; ok {
 		return val, nil
 	}
 	return nil, errors.New("user does not have permissions")
 }
 
+func (m MockSession) AddHandler(h Handler) {
+	return
+}
+
+func (m MockSession) Open() {
+	return
+}
+
+func (m MockSession) Close() {
+	return
+}
+
 func (m MockSession) GuildMemberRoleRemove(guildID, userID, roleID string) error {
 	var roles []string
-	for _, role := range m.users[userID] {
+	for _, role := range m.SessionUsers[userID] {
 		if role != roleID {
 			roles = append(roles, role)
 		}

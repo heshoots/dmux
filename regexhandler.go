@@ -46,7 +46,7 @@ func (h DiscordRegexHandlerContext) Groups() map[string]string {
 	matchMap := make(map[string]string)
 	if ok {
 		regex := regexp.MustCompile(h.pattern)
-		groups := regex.FindStringSubmatch(ctx.Message())
+		groups := regex.FindStringSubmatch(ctx.Message().Content())
 		names := regex.SubexpNames()
 		for i, name := range names {
 			matchMap[name] = groups[i]
@@ -62,21 +62,21 @@ func (h *DiscordRegexMessageHandler) Handle(s Session, context HandlerContext) {
 			log.Error("Couldn't read message context")
 			return
 		}
-		isAdmin, err := ctx.UserAdmin(s)
+		isAdmin, err := ctx.User().Admin(s, ctx.Channel())
 		if err != nil {
 			log.Error("Couldn't determine if admin user")
 			return
 		}
 		if h.NeedsAdmin() && !isAdmin {
 			log.Error("User not admin")
-			s.MessageChannel(ctx.ChannelID(), "Only admins can do this")
+			s.MessageChannel(ctx.Channel(), DiscordMessageString("Only admins can do this"))
 			return
 		}
 		log.WithFields(log.Fields{
 			"Handler":     h.Name(),
 			"Description": h.Description(),
-			"User_ID":     ctx.UserID(),
-			"User_Name":   ctx.UserName(),
+			"User_ID":     ctx.User().ID(),
+			"User_Name":   ctx.User().Name(),
 		}).Info()
 		h.HandlerFn(s, DiscordRegexHandlerContext{
 			context,
@@ -89,7 +89,7 @@ func (h *DiscordRegexMessageHandler) Pattern(context HandlerContext) bool {
 	ok, ctx := context.MessageContext()
 	if ok {
 		regex := regexp.MustCompile(h.HandlerPattern)
-		return regex.MatchString(ctx.Message())
+		return regex.MatchString(ctx.Message().Content())
 	}
 	return false
 }

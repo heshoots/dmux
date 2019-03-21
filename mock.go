@@ -4,11 +4,23 @@ import (
 	"errors"
 )
 
-type MockSession struct {
-	SessionMessages        []Message
+type MockGuild struct {
 	SessionRoles           []Role
 	SessionUsers           map[string][]string
 	SessionUserPermissions map[string]Permissions
+	SessionMessages        []Message
+}
+
+func (g MockGuild) ID() string {
+	return "mockguild"
+}
+
+func (g MockGuild) Roles(s Session) ([]Role, error) {
+	return g.SessionRoles, nil
+}
+
+type MockSession struct {
+	Guild MockGuild
 }
 
 type MockRole struct {
@@ -25,25 +37,65 @@ func (r MockRole) ID() string {
 }
 
 type MockMessage struct {
-	string
+	id      string
+	content string
+	user    User
 }
 
-func (m MockSession) MessageChannel(channelID, message string) (Message, error) {
-	m.SessionMessages = append(m.SessionMessages, message)
-	return MockMessage{message}, nil
+type MockUser struct {
+	id    string
+	name  string
+	admin bool
 }
 
-func (m MockSession) GuildRoles(guildID string) ([]Role, error) {
-	return m.SessionRoles, nil
+func CreateMockMessage(id string, content string, u User) MockMessage {
+	return MockMessage{id, content, u}
 }
 
-func (m MockSession) GuildMemberRoleAdd(guildID, userID, roleID string) error {
-	m.SessionUsers[userID] = append(m.SessionUsers[userID], roleID)
+func CreateMockUser(id string, name string, admin bool) MockUser {
+	return MockUser{id, name, admin}
+}
+
+func (u MockUser) Admin(s Session, c Channel) (bool, error) {
+	return u.admin, nil
+}
+
+func (u MockUser) ID() string {
+	return u.id
+}
+
+func (u MockUser) Name() string {
+	return u.name
+}
+
+func (m MockMessage) ID() string {
+	return m.id
+}
+
+func (m MockMessage) Content() string {
+	return m.content
+}
+
+func (m MockMessage) Author() User {
+	return m.user
+}
+
+func (m MockSession) MessageChannel(channel Channel, message Message) (Message, error) {
+	m.Guild.SessionMessages = append(m.Guild.SessionMessages, message)
+	return message, nil
+}
+
+func (m MockSession) GuildRoles(guild Guild) ([]Role, error) {
+	return m.Guild.SessionRoles, nil
+}
+
+func (m MockSession) GuildMemberRoleAdd(guild Guild, user User, role Role) error {
+	m.Guild.SessionUsers[user.ID()] = append(m.Guild.SessionUsers[user.ID()], role.ID())
 	return nil
 }
 
-func (m MockSession) UserChannelPermissions(userID, channelID string) (Permissions, error) {
-	if val, ok := m.SessionUserPermissions[userID]; ok {
+func (m MockSession) UserPermissions(user User, channel Channel) (Permissions, error) {
+	if val, ok := m.Guild.SessionUserPermissions[user.ID()]; ok {
 		return val, nil
 	}
 	return nil, errors.New("user does not have permissions")
@@ -61,10 +113,10 @@ func (m MockSession) Close() {
 	return
 }
 
-func (m MockSession) GuildMemberRoleRemove(guildID, userID, roleID string) error {
+func (m MockSession) GuildMemberRoleRemove(guild Guild, user User, roleremove Role) error {
 	var roles []string
-	for _, role := range m.SessionUsers[userID] {
-		if role != roleID {
+	for _, role := range m.Guild.SessionUsers[user.ID()] {
+		if role != roleremove.Name() {
 			roles = append(roles, role)
 		}
 	}

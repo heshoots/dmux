@@ -14,7 +14,11 @@ func CreateDiscordRole(id string) Role {
 }
 
 func (s DiscordRole) ID() string {
-	return s.Role.ID
+	if s.Role == nil {
+		return s.id
+	} else {
+		return s.Role.ID
+	}
 }
 
 func (s DiscordRole) Name() string {

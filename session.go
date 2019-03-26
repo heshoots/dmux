@@ -51,5 +51,5 @@ func (s DiscordSession) GuildMemberRoleAdd(g Guild, u User, r Role) error {
 }
 
 func (s DiscordSession) GuildMemberRoleRemove(g Guild, u User, r Role) error {
-	return s.Session.GuildMemberRoleAdd(g.ID(), u.ID(), r.ID())
+	return s.Session.GuildMemberRoleRemove(g.ID(), u.ID(), r.ID())
 }

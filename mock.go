@@ -94,6 +94,12 @@ func (m MockSession) GuildMemberRoleAdd(guild Guild, user User, role Role) error
 	return nil
 }
 
+func (m MockSession) GuildRoleCreate(role string) (Role, error) {
+	newrole := MockRole{RoleName: role, RoleID: "testrole"}
+	m.Guild.SessionRoles = append(m.Guild.SessionRoles, newrole)
+	return newrole, nil
+}
+
 func (m MockSession) UserPermissions(user User, channel Channel) (Permissions, error) {
 	if val, ok := m.Guild.SessionUserPermissions[user.ID()]; ok {
 		return val, nil

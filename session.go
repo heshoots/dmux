@@ -2,6 +2,7 @@ package dmux
 
 import (
 	"github.com/bwmarrin/discordgo"
+	"log"
 )
 
 type DiscordSession struct {
@@ -47,7 +48,14 @@ func (s DiscordSession) UserPermissions(u User, c Channel) (Permissions, error) 
 }
 
 func (s DiscordSession) GuildMemberRoleAdd(g Guild, u User, r Role) error {
+	log.Printf("%v", r)
 	return s.Session.GuildMemberRoleAdd(g.ID(), u.ID(), r.ID())
+}
+
+func (s DiscordSession) GuildRoleCreate(guild string, role string) (Role, error) {
+	newrole, err := s.Session.GuildRoleCreate(guild)
+	s.Session.GuildRoleEdit(guild, newrole)
+	return DiscordRole{Role: newrole}, err
 }
 
 func (s DiscordSession) GuildMemberRoleRemove(g Guild, u User, r Role) error {

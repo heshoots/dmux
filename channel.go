@@ -5,10 +5,18 @@ import (
 )
 
 type DiscordChannel struct {
-	id      string
-	channel *discordgo.Channel
+	*discordgo.Channel
+	id string
+}
+
+func CreateDiscordChannel(id string) DiscordChannel {
+	return DiscordChannel{Channel: nil, id: id}
 }
 
 func (c DiscordChannel) ID() string {
-	return c.id
+	if c.Channel != nil {
+		return c.Channel.ID
+	} else {
+		return c.id
+	}
 }

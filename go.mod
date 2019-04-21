@@ -1,4 +1,4 @@
-module github.com/heshoots/dmux
+module github.com/quorauk/dmux
 
 go 1.12
 

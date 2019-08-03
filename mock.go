@@ -94,7 +94,13 @@ func (m MockSession) GuildMemberRoleAdd(guild Guild, user User, role Role) error
 	return nil
 }
 
-func (m MockSession) GuildRoleCreate(role string) (Role, error) {
+func (m MockSession) GuildRoleEdit(guild, roleid, rolename string, color int, hoist bool, perm int, mention bool) (Role, error) {
+	newrole := MockRole{RoleName: rolename, RoleID: "testrole"}
+	m.Guild.SessionRoles = append(m.Guild.SessionRoles, newrole)
+	return newrole, nil
+}
+
+func (m MockSession) GuildRoleCreate(guild string, role string) (Role, error) {
 	newrole := MockRole{RoleName: role, RoleID: "testrole"}
 	m.Guild.SessionRoles = append(m.Guild.SessionRoles, newrole)
 	return newrole, nil

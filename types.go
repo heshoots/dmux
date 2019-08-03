@@ -7,6 +7,7 @@ import (
 type HandlerType int
 
 const (
+	// A handler which consumers messages
 	MessageHandler = 0
 )
 

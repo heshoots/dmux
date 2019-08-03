@@ -1,5 +1,6 @@
 package dmux
 
+// Provides information about an incoming message to a handler
 type MessageContext interface {
 	Guild() Guild
 	Channel() Channel
@@ -7,10 +8,22 @@ type MessageContext interface {
 	User() User
 }
 
+/*
+  Provides relevant contextual information to a handler
+
+  a handler which responds to messages would use MessageContext to obtain
+  the message information
+*/
 type HandlerContext interface {
 	MessageContext() (bool, MessageContext)
 }
 
+/*
+  A handler which responds to certain router commands
+
+  Currently supported handler types:
+	MessageHandler
+*/
 type Handler interface {
 	Handle(c Session, context HandlerContext)
 	HandlerType() HandlerType
@@ -50,12 +63,19 @@ type Permissions interface {
 }
 
 type Session interface {
+	// Send a message to a channel
 	MessageChannel(c Channel, m Message) (Message, error)
+	// Get list of roles for a joined guild
 	GuildRoles(g Guild) ([]Role, error)
+	// Add role to a user within a guild
 	GuildMemberRoleAdd(g Guild, u User, r Role) error
+	// Remove a role from a user within a guild
 	GuildMemberRoleRemove(g Guild, u User, r Role) error
+	// Create a role with given role name in guild
 	GuildRoleCreate(guild string, role string) (Role, error)
+	// Get permissions for a user in a channel
 	UserPermissions(u User, c Channel) (Permissions, error)
+	// Add handler to router
 	AddHandler(Handler)
 	Open()
 	Close()

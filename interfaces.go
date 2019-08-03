@@ -54,7 +54,7 @@ type Session interface {
 	GuildRoles(g Guild) ([]Role, error)
 	GuildMemberRoleAdd(g Guild, u User, r Role) error
 	GuildMemberRoleRemove(g Guild, u User, r Role) error
-	GuildRoleCreate(role string) (Role, error)
+	GuildRoleCreate(guild string, role string) (Role, error)
 	UserPermissions(u User, c Channel) (Permissions, error)
 	AddHandler(Handler)
 	Open()

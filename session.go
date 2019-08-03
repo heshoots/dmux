@@ -54,7 +54,7 @@ func (s DiscordSession) GuildMemberRoleAdd(g Guild, u User, r Role) error {
 
 func (s DiscordSession) GuildRoleCreate(guild string, role string) (Role, error) {
 	newrole, err := s.Session.GuildRoleCreate(guild)
-	s.Session.GuildRoleEdit(guild, newrole)
+	s.Session.GuildRoleEdit(guild, newrole.ID, role, 0, false, 0, false)
 	return DiscordRole{Role: newrole}, err
 }
 

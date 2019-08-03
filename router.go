@@ -9,5 +9,5 @@ func Router(authToken string) (Session, error) {
 	if err != nil {
 		return nil, err
 	}
-	return DiscordSession{d, []Handler{}}, nil
+	return &DiscordSession{d, []Handler{}}, nil
 }

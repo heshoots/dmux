@@ -1,5 +1,9 @@
 package dmux
 
+import (
+	"github.com/bwmarrin/discordgo"
+)
+
 // Provides information about an incoming message to a handler
 type MessageContext interface {
 	Guild() Guild
@@ -79,4 +83,5 @@ type Session interface {
 	AddHandler(Handler)
 	Open()
 	Close()
+	RawSession() *discordgo.Session
 }

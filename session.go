@@ -23,6 +23,10 @@ func (s *DiscordSession) Open() {
 	s.Session.Open()
 }
 
+func (s *DiscordSession) RawSession() *discordgo.Session {
+	return s.Session
+}
+
 /*
   Base router for all discord event types
 

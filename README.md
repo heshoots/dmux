@@ -26,7 +26,7 @@ fun main() {
 		return
 	}
   
-  handler := &dmux.DiscordRegexMessageHandler{
+	handler := &dmux.DiscordRegexMessageHandler{
 			HandlerPattern:     `^!echo (?P<message>.*)$`,
 			HandlerFn:          echo,
 			HandlerName:        "!echo",
@@ -34,7 +34,7 @@ fun main() {
 			HandlerDescription: "echo a message",
 	},
   
-  discordInstance.AddHandler(handler)
+ 	discordInstance.AddHandler(handler)
 	discordInstance.Open()
 
 	sc := make(chan os.Signal, 1)
@@ -45,3 +45,5 @@ fun main() {
 	discordInstance.Close()
 }
 ```
+
+For further usage of this library see https://github.com/quorauk/cholibot/tree/master/pkg/discord

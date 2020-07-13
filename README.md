@@ -13,7 +13,7 @@ some example code for setting up a basic echo server
 func echo(s dmux.Session, context dmux.RegexHandlerContext) {
 	ok, ctx := context.MessageContext()
 	if ok {
-    message := context.Groups()["message"]
+    		message := context.Groups()["message"]
 		SendMessage(s, ctx.Channel(), message)
 		return
 	}
